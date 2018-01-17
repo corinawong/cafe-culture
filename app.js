@@ -12,7 +12,8 @@ mongoose.connect("mongodb://localhost:27017/cafe-culture", {
 // Schema setup
 const cafeSchema = new mongoose.Schema({
   name: String,
-  image: String
+  image: String,
+  description: String
 });
 
 const Cafe = mongoose.model("Cafe", cafeSchema);
@@ -36,7 +37,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
 app.get("/", (req, res) => {
-  res.render("index", {
+  res.render("landing", {
     title: "Homepage"
   });
 });
@@ -44,7 +45,7 @@ app.get("/", (req, res) => {
 app.get("/cafes", (req, res) => {
   Cafe.find().then(
     cafes => {
-      res.render("cafes", {
+      res.render("index", {
         title: "Cafés",
         cafes
       });
@@ -73,6 +74,10 @@ app.post("/cafes", (req, res) => {
       console.log(e);
     }
   );
+});
+
+app.get("/cafes/:id", (req, res) => {
+  res.render("show");
 });
 
 app.listen(3000, () => {
