@@ -77,7 +77,14 @@ app.post("/cafes", (req, res) => {
 });
 
 app.get("/cafes/:id", (req, res) => {
-  res.render("show");
+  Cafe.findById(req.params.id).then(
+    cafe => {
+      res.render("show", { cafe });
+    },
+    e => {
+      console.log(e);
+    }
+  );
 });
 
 app.listen(3000, () => {
