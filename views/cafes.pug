@@ -3,14 +3,12 @@ extends layout
 block appHeader
   p View our featured Cafés
   p 
-    a(class="btn btn-primary btn-large", href="/cafes/new") Add a new Café
+    a(class="add-new", href="/cafes/new") Add a new Café
 block content
 
-  div(class="row", style="display:flex; flex-wrap: wrap;")
+  div(class="cafe-row")
     for cafe in cafes
-      div(class="col-md-3 col-sm-6")
-        div(class="thumbnail")
-          img(src=cafe.image)
-        div(class="text-center")
-          h3= cafe.name
+      div(class="cafe-preview")
+        img(src=cafe.image)
+        h3= cafe.name
         
