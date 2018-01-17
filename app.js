@@ -11,6 +11,18 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/cafes", (req, res) => {
+  var cafes = [
+    { name: "Cat Café", image: "" },
+    { name: "Board Games Café" },
+    { name: "Robot Café" }
+  ];
+  res.render("cafes", {
+    title: "Cafés",
+    cafes
+  });
+});
+
 app.listen(3000, () => {
-  console.log("Cafe Culture server started...");
+  console.log("Café Culture server started...");
 });
