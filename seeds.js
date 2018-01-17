@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Cafe = require("./models/cafe");
+const Comment = require("./models/comment");
 
 let data = [
   {
@@ -46,8 +47,19 @@ let seedDB = () => {
     .then(() => {
       // Seed cafes
       data.forEach(seed => {
-        Cafe.create(seed).then(data => {
+        Cafe.create(seed).then(cafe => {
           console.log("Added cafe");
+          // Create comments
+          Comment.create({
+            text: "This place serves incredible coffee.",
+            author: "Bob"
+          })
+            .then(comment => {
+              cafe.comments.push(comment);
+              cafe.save();
+              console.log("Comment created");
+            })
+            .catch(e => console.log(e));
         });
       });
     })

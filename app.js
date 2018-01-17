@@ -5,14 +5,13 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Cafe = require("./models/cafe");
 const seedDB = require("./seeds");
-const Comment = require("./models/comment");
 
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost:27017/cafe-culture", {
   useMongoClient: true
 });
 
-//seedDB();
+// seedDB();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "public")));
