@@ -3,32 +3,16 @@ const path = require("path");
 const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const Cafe = require("./models/cafe");
+const seedDB = require("./seeds");
+const Comment = require("./models/comment");
 
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost:27017/cafe-culture", {
   useMongoClient: true
 });
 
-// Schema setup
-const cafeSchema = new mongoose.Schema({
-  name: String,
-  image: String,
-  description: String
-});
-
-const Cafe = mongoose.model("Cafe", cafeSchema);
-
-// Cafe.create({
-//   name: "Board Games Café",
-//   image: "https://farm5.staticflickr.com/4110/5024733655_892e48ed8c_b.jpg"
-// }).then(
-//   cafe => {
-//     console.log("NEW CAFE", cafe);
-//   },
-//   err => {
-//     console.log(err);
-//   }
-// );
+//seedDB();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "public")));
@@ -65,7 +49,8 @@ app.get("/cafes/new", (req, res) => {
 app.post("/cafes", (req, res) => {
   const name = req.body.name;
   const image = req.body.image;
-  const newCafe = { name, image };
+  const description = req.body.description;
+  const newCafe = { name, image, description };
   Cafe.create(newCafe).then(
     cafe => {
       res.redirect("/cafes");
