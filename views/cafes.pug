@@ -1,8 +1,16 @@
 extends layout
 
+block appHeader
+  p View our featured Cafés
+  p 
+    a(class="btn btn-primary btn-large", href="/cafes/new") Add a new Café
 block content
-  ul
-    for cafe in cafes
-      li= cafe.name
 
-  a(href='/cafes/new') Add a new Café
+  div(class="row", style="display:flex; flex-wrap: wrap;")
+    for cafe in cafes
+      div(class="col-md-3 col-sm-6")
+        div(class="thumbnail")
+          img(src=cafe.image)
+        div(class="text-center")
+          h3= cafe.name
+        
