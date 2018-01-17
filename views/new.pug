@@ -1,0 +1,6 @@
+extends layout
+
+block content
+  form(action="/cafes", method="POST")
+    input(type="text", name="name", placeholder="name")
+    button Submit

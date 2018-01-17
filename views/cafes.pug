@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  ul
+    for cafe in cafes
+      li= cafe.name
+
+  a(href='/cafes/new') Add a new Café
