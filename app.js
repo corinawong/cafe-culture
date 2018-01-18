@@ -5,10 +5,15 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+
 const Cafe = require("./models/cafe");
 const Comment = require("./models/comment");
 const User = require("./models/user");
 const seedDB = require("./seeds");
+
+const indexRoutes = require("./routes/index");
+const cafeRoutes = require("./routes/cafes");
+const commentRoutes = require("./routes/comments");
 
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost:27017/cafe-culture", {
@@ -44,130 +49,9 @@ app.use((req, res, next) => {
   next();
 });
 
-const loggedIn = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/login");
-};
-
-app.get("/", (req, res) => {
-  res.render("landing", { title: "Homepage" });
-});
-
-app.get("/cafes", (req, res) => {
-  // Render all cafes in DB
-  console.log(req.user);
-  Cafe.find().then(
-    cafes => {
-      res.render("cafes/index", {
-        title: "Cafés",
-        cafes
-      });
-    },
-    err => {
-      console.log(err);
-    }
-  );
-});
-
-app.get("/cafes/new", (req, res) => {
-  res.render("cafes/new", { title: "Add a new Café" });
-});
-
-app.post("/cafes", (req, res) => {
-  const name = req.body.name;
-  const image = req.body.image;
-  const description = req.body.description;
-  const newCafe = { name, image, description };
-  Cafe.create(newCafe).then(
-    cafe => {
-      res.redirect("/cafes");
-    },
-    e => {
-      console.log(e);
-    }
-  );
-});
-
-app.get("/cafes/:id", (req, res) => {
-  Cafe.findById(req.params.id)
-    .populate("comments")
-    .exec((err, cafe) => {
-      if (err) {
-        console.log(e);
-      } else {
-        console.log(cafe);
-        res.render("cafes/show", {
-          title: cafe.name,
-          cafe
-        });
-      }
-    });
-});
-
-// Comment Routes
-
-app.get("/cafes/:id/comments/new", loggedIn, (req, res) => {
-  Cafe.findById(req.params.id)
-    .then(cafe => {
-      res.render("comments/new", { cafe });
-    })
-    .catch(e => console.log(e));
-});
-
-app.post("/cafes/:id/comments", loggedIn, (req, res) => {
-  Cafe.findById(req.params.id)
-    .then(cafe => {
-      Comment.create(req.body.comment).then(comment => {
-        cafe.comments.push(comment);
-        cafe.save();
-        res.redirect("/cafes/" + cafe._id);
-      });
-    })
-    .catch(e => {
-      console.log(e);
-      res.redirect("/cafe");
-    });
-});
-
-// Auth Routes
-app.get("/register", (req, res) => {
-  res.render("register");
-});
-
-app.post("/register", (req, res) => {
-  const newUser = new User({ username: req.body.username });
-  User.register(newUser, req.body.password, (err, user) => {
-    if (err) {
-      console.log(err);
-      return res.render("register");
-    }
-    passport.authenticate("local")(req, res, () => {
-      res.redirect("/cafes");
-    });
-  });
-});
-
-app.get("/login", (req, res) => {
-  res.render("login");
-});
-
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/cafes",
-    failureRedirect: "/login"
-  }),
-  (req, res) => {
-    res.send("login done");
-  }
-);
-
-app.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect("/cafes");
-});
+app.use(indexRoutes);
+app.use("/cafes", cafeRoutes);
+app.use("/cafes/:id/comments", commentRoutes);
 
 app.listen(3000, () => {
   console.log("Café Culture server started...");
