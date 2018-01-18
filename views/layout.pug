@@ -5,12 +5,15 @@ html
     title Café Culture - #{title}
   body
     nav
-      li
-        a(href="/login") Login
-      li
-        a(href="/register") Register
-      li
-        a(href="/logout") Logout
+      if !currentUser
+        li
+          a(href="/login") Login 
+        li
+          a(href="/register") Register
+      else
+        li Hello #{currentUser.username}!
+        li
+          a(href="/logout") Logout
 
     div(class="container")
       header

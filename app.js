@@ -33,9 +33,16 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+// Pass currentUser variable to all routes
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
+});
 
 const loggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -49,6 +56,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/cafes", (req, res) => {
+  // Render all cafes in DB
+  console.log(req.user);
   Cafe.find().then(
     cafes => {
       res.render("cafes/index", {
