@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+  img(src=cafe.image)
+  p= cafe.description
+
+  p
+    a(href=`/cafes/${cafe._id}/comments/new`) Add your review
+  for comment in cafe.comments
+    div(class="comment")
+      p= comment.author
+      p= comment.text

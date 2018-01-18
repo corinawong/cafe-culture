@@ -53,13 +53,11 @@ let seedDB = () => {
           Comment.create({
             text: "This place serves incredible coffee.",
             author: "Bob"
-          })
-            .then(comment => {
-              cafe.comments.push(comment);
-              cafe.save();
-              console.log("Comment created");
-            })
-            .catch(e => console.log(e));
+          }).then(comment => {
+            cafe.comments.push(comment);
+            cafe.save();
+            console.log("Comment created");
+          });
         });
       });
     })
