@@ -37,6 +37,13 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+const loggedIn = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+};
+
 app.get("/", (req, res) => {
   res.render("landing", { title: "Homepage" });
 });
@@ -92,7 +99,7 @@ app.get("/cafes/:id", (req, res) => {
 
 // Comment Routes
 
-app.get("/cafes/:id/comments/new", (req, res) => {
+app.get("/cafes/:id/comments/new", loggedIn, (req, res) => {
   Cafe.findById(req.params.id)
     .then(cafe => {
       res.render("comments/new", { cafe });
@@ -100,10 +107,9 @@ app.get("/cafes/:id/comments/new", (req, res) => {
     .catch(e => console.log(e));
 });
 
-app.post("/cafes/:id/comments", (req, res) => {
+app.post("/cafes/:id/comments", loggedIn, (req, res) => {
   Cafe.findById(req.params.id)
     .then(cafe => {
-      console.log(req.body.comment);
       Comment.create(req.body.comment).then(comment => {
         cafe.comments.push(comment);
         cafe.save();
@@ -148,6 +154,11 @@ app.post(
     res.send("login done");
   }
 );
+
+app.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect("/cafes");
+});
 
 app.listen(3000, () => {
   console.log("Café Culture server started...");

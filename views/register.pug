@@ -1,6 +1,10 @@
-h1 Sign up!
+extends layout
 
-form(action="/register", method="post")
-  input(type="text", name="username", placeholder="username")
-  input(type="password", name="password", placeholder="password")
-  button Sign Up
+block content
+
+  h1 Sign up!
+
+  form(action="/register", method="post")
+    input(type="text", name="username", placeholder="username")
+    input(type="password", name="password", placeholder="password")
+    button Sign Up
