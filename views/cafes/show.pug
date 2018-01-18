@@ -15,5 +15,5 @@ block content
       a(href=`/cafes/${cafe._id}/comments/new`) Add your review
     for comment in cafe.comments
       div(class="comment")
-        p= comment.author
+        p= comment.author.username
         p= comment.text

@@ -26,7 +26,7 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
-// seedDB();
+seedDB();
 
 // Passport Config
 app.use(

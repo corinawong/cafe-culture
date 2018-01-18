@@ -5,6 +5,5 @@ block content
   h2 Leave your review for #{cafe.name}
 
   form(action=`/cafes/${cafe._id}/comments`, method="POST")
-    input(type="text", name="comment[author]", placeholder="Your name here")
     input(type="text", name="comment[text]", placeholder="Your review here")
     button Submit
