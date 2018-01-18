@@ -3,8 +3,11 @@ const path = require("path");
 const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
 const Cafe = require("./models/cafe");
 const Comment = require("./models/comment");
+const User = require("./models/user");
 const seedDB = require("./seeds");
 
 mongoose.Promise = global.Promise;
@@ -19,6 +22,20 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
 // seedDB();
+
+// Passport Config
+app.use(
+  require("express-session")({
+    secret: "And this too shall pass",
+    resave: false,
+    saveUninitialized: false
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.get("/", (req, res) => {
   res.render("landing", { title: "Homepage" });
@@ -97,6 +114,24 @@ app.post("/cafes/:id/comments", (req, res) => {
       console.log(e);
       res.redirect("/cafe");
     });
+});
+
+// Auth Routes
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
+app.post("/register", (req, res) => {
+  const newUser = new User({ username: req.body.username });
+  User.register(newUser, req.body.password, (err, user) => {
+    if (err) {
+      console.log(err);
+      return res.render("register");
+    }
+    passport.authenticate("local")(req, res, () => {
+      res.redirect("/cafes");
+    });
+  });
 });
 
 app.listen(3000, () => {
