@@ -134,6 +134,21 @@ app.post("/register", (req, res) => {
   });
 });
 
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/cafes",
+    failureRedirect: "/login"
+  }),
+  (req, res) => {
+    res.send("login done");
+  }
+);
+
 app.listen(3000, () => {
   console.log("Café Culture server started...");
 });
