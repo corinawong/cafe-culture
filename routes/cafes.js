@@ -10,6 +10,26 @@ const loggedIn = (req, res, next) => {
   res.redirect("/login");
 };
 
+const checkCafeAuthor = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    Cafe.findById(req.params.id, (err, cafe) => {
+      if (err) {
+        res.redirect("back");
+      } else {
+        // is user the author?
+        if (cafe.author.id.equals(req.user._id)) {
+          // move on to the next step
+          next();
+        } else {
+          res.redirect("back");
+        }
+      }
+    });
+  } else {
+    res.redirect("back");
+  }
+};
+
 // -------- /cafes
 
 // Show all cafes
@@ -64,7 +84,7 @@ router.get("/:id", (req, res) => {
 });
 
 // Edit cafe form
-router.get("/:id/edit", (req, res) => {
+router.get("/:id/edit", checkCafeAuthor, (req, res) => {
   Cafe.findById(req.params.id)
     .then(cafe => {
       res.render("cafes/edit", { cafe });
@@ -72,7 +92,8 @@ router.get("/:id/edit", (req, res) => {
     .catch(e => console.log(e));
 });
 
-router.put("/:id", (req, res) => {
+// Update Cafe
+router.put("/:id", checkCafeAuthor, (req, res) => {
   Cafe.findByIdAndUpdate(req.params.id, req.body.cafe, (err, updatedCafe) => {
     if (err) {
       res.redirect("/cafes");
@@ -83,7 +104,7 @@ router.put("/:id", (req, res) => {
 });
 
 // Delete a cafe
-router.delete("/:id", (req, res) => {
+router.delete("/:id", checkCafeAuthor, (req, res) => {
   Cafe.findByIdAndRemove(req.params.id, err => {
     if (err) {
       res.redirect("/cafes");

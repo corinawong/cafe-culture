@@ -19,8 +19,10 @@ block content
         p= comment.author.username
         p= comment.text
 
-    a(href=`/cafes/${cafe._id}/edit`) Edit Café
+    if currentUser && cafe.author.id.equals(currentUser._id)
+      div(class="edit-buttons")
+        a(href=`/cafes/${cafe._id}/edit`) Edit Café
 
-    form(action=`/cafes/${cafe._id}?_method=DELETE`, method="POST")
-      button Delete
-    
+        form(action=`/cafes/${cafe._id}?_method=DELETE`, method="POST")
+          button Delete
+      
