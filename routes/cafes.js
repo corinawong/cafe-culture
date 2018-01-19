@@ -63,4 +63,23 @@ router.get("/:id", (req, res) => {
     });
 });
 
+// Edit cafe form
+router.get("/:id/edit", (req, res) => {
+  Cafe.findById(req.params.id)
+    .then(cafe => {
+      res.render("cafes/edit", { cafe });
+    })
+    .catch(e => console.log(e));
+});
+
+router.put("/:id", (req, res) => {
+  Cafe.findByIdAndUpdate(req.params.id, req.body.cafe, (err, updatedCafe) => {
+    if (err) {
+      res.redirect("/cafes");
+    } else {
+      res.redirect("/cafes/" + req.params.id);
+    }
+  });
+});
+
 module.exports = router;

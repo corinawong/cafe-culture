@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const methodOverride = require("method-override");
 
 const Cafe = require("./models/cafe");
 const Comment = require("./models/comment");
@@ -22,11 +23,12 @@ mongoose.connect("mongodb://localhost:27017/cafe-culture", {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "public")));
+app.use(methodOverride("_method"));
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
-seedDB();
+//seedDB();
 
 // Passport Config
 app.use(
