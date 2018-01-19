@@ -10,6 +10,25 @@ const loggedIn = (req, res, next) => {
   res.redirect("/login");
 };
 
+const checkCommentAuthor = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    Comment.findById(req.params.commentId, (err, comment) => {
+      if (err) {
+        res.redirect("back");
+      } else {
+        // is user the author?
+        if (comment.author.id.equals(req.user._id)) {
+          next();
+        } else {
+          res.redirect("back");
+        }
+      }
+    });
+  } else {
+    res.redirect("back");
+  }
+};
+
 // -------- /cafes/:id/comments
 
 router.get("/new", loggedIn, (req, res) => {
@@ -41,7 +60,7 @@ router.post("/", loggedIn, (req, res) => {
 });
 
 // Edit comment form
-router.get("/:commentId/edit", (req, res) => {
+router.get("/:commentId/edit", checkCommentAuthor, (req, res) => {
   Comment.findById(req.params.commentId)
     .then(comment => {
       res.render("comments/edit", { cafe_id: req.params.id, comment });
@@ -63,7 +82,7 @@ router.put("/:commentId", (req, res) => {
 });
 
 // Delete comment
-router.delete("/:commentId", (req, res) => {
+router.delete("/:commentId", checkCommentAuthor, (req, res) => {
   Comment.findByIdAndRemove(req.params.commentId)
     .then(() => {
       res.redirect(`/cafes/${req.params.id}`);

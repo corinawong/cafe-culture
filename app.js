@@ -28,7 +28,7 @@ app.use(methodOverride("_method"));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
-// seedDB();
+seedDB();
 
 // Passport Config
 app.use(
