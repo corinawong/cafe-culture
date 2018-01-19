@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Cafe = require("../models/cafe");
 
+// middleware
 const loggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
@@ -11,9 +12,8 @@ const loggedIn = (req, res, next) => {
 
 // -------- /cafes
 
+// Show all cafes
 router.get("/", (req, res) => {
-  // Render all cafes in DB
-  console.log(req.user);
   Cafe.find()
     .then(cafes => {
       res.render("cafes/index", {
@@ -24,22 +24,30 @@ router.get("/", (req, res) => {
     .catch(err => console.log(err));
 });
 
-router.post("/", (req, res) => {
+// New cafe form
+router.get("/new", loggedIn, (req, res) => {
+  res.render("cafes/new", { title: "Add a new Café" });
+});
+
+// Create a cafe entry
+router.post("/", loggedIn, (req, res) => {
   const name = req.body.name;
   const image = req.body.image;
   const description = req.body.description;
-  const newCafe = { name, image, description };
+  const author = {
+    id: req.user._id,
+    username: req.user.username
+  };
+  const newCafe = { name, image, description, author };
   Cafe.create(newCafe)
     .then(cafe => {
+      console.log(newCafe);
       res.redirect("/cafes");
     })
     .catch(err => console.log(err));
 });
 
-router.get("/new", (req, res) => {
-  res.render("cafes/new", { title: "Add a new Café" });
-});
-
+// Individual cafe with comments
 router.get("/:id", (req, res) => {
   Cafe.findById(req.params.id)
     .populate("comments")
