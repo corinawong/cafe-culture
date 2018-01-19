@@ -1,0 +1,11 @@
+extends ../layout
+
+block appHeader
+  h2 Edit #{cafe.name}
+
+block content
+  form(action=`/cafes/${cafe._id}?_method=PUT`, method="POST")
+    input(type="text", name="cafe[name]", value=`${cafe.name}`)
+    input(type="text", name="cafe[image]", value=`${cafe.image}`)
+    input(type="text", name="cafe[description]", value=`${cafe.description}`)
+    button Submit

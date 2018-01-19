@@ -20,3 +20,7 @@ block content
         p= comment.text
 
     a(href=`/cafes/${cafe._id}/edit`) Edit Café
+
+    form(action=`/cafes/${cafe._id}?_method=DELETE`, method="POST")
+      button Delete
+    

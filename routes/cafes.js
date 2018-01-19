@@ -82,4 +82,15 @@ router.put("/:id", (req, res) => {
   });
 });
 
+// Delete a cafe
+router.delete("/:id", (req, res) => {
+  Cafe.findByIdAndRemove(req.params.id, err => {
+    if (err) {
+      res.redirect("/cafes");
+    } else {
+      res.redirect("/cafes");
+    }
+  });
+});
+
 module.exports = router;
