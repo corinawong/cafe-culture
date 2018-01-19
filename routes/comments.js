@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
+const flash = require("connect-flash");
 const Cafe = require("../models/cafe");
 const Comment = require("../models/comment");
 
@@ -7,6 +8,7 @@ const loggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
+  req.flash("error", "Please login");
   res.redirect("/login");
 };
 
@@ -14,12 +16,14 @@ const checkCommentAuthor = (req, res, next) => {
   if (req.isAuthenticated()) {
     Comment.findById(req.params.commentId, (err, comment) => {
       if (err) {
+        req.flash("error", "Something went wrong");
         res.redirect("back");
       } else {
         // is user the author?
         if (comment.author.id.equals(req.user._id)) {
           next();
         } else {
+          req.flash("error", "Permission denied");
           res.redirect("back");
         }
       }
@@ -50,6 +54,7 @@ router.post("/", loggedIn, (req, res) => {
         comment.save();
         cafe.comments.push(comment);
         cafe.save();
+        req.flash("success", "Review saved");
         res.redirect("/cafes/" + cafe._id);
       });
     })
@@ -85,6 +90,7 @@ router.put("/:commentId", (req, res) => {
 router.delete("/:commentId", checkCommentAuthor, (req, res) => {
   Comment.findByIdAndRemove(req.params.commentId)
     .then(() => {
+      req.flash("success", "Review deleted");
       res.redirect(`/cafes/${req.params.id}`);
     })
     .catch(() => {

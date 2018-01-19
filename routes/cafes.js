@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const flash = require("connect-flash");
 const Cafe = require("../models/cafe");
 
 // middleware
@@ -7,6 +8,7 @@ const loggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
+  req.flash("error", "Please login");
   res.redirect("/login");
 };
 
@@ -14,6 +16,7 @@ const checkCafeAuthor = (req, res, next) => {
   if (req.isAuthenticated()) {
     Cafe.findById(req.params.id, (err, cafe) => {
       if (err) {
+        req.flash("error", "Cafe not found");
         res.redirect("back");
       } else {
         // is user the author?
@@ -21,11 +24,13 @@ const checkCafeAuthor = (req, res, next) => {
           // move on to the next step
           next();
         } else {
+          req.flash("error", "Permission denied");
           res.redirect("back");
         }
       }
     });
   } else {
+    req.flash("error", "Please log in");
     res.redirect("back");
   }
 };
@@ -61,7 +66,7 @@ router.post("/", loggedIn, (req, res) => {
   const newCafe = { name, image, description, author };
   Cafe.create(newCafe)
     .then(cafe => {
-      console.log(newCafe);
+      req.flash("success", "Café saved");
       res.redirect("/cafes");
     })
     .catch(err => console.log(err));
@@ -109,6 +114,7 @@ router.delete("/:id", checkCafeAuthor, (req, res) => {
     if (err) {
       res.redirect("/cafes");
     } else {
+      req.flash("success", "Café deleted");
       res.redirect("/cafes");
     }
   });

@@ -3,6 +3,7 @@ const path = require("path");
 const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const methodOverride = require("method-override");
@@ -24,11 +25,12 @@ mongoose.connect("mongodb://localhost:27017/cafe-culture", {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
+app.use(flash());
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
-seedDB();
+//seedDB();
 
 // Passport Config
 app.use(
@@ -48,6 +50,8 @@ passport.deserializeUser(User.deserializeUser());
 // Pass currentUser variable to all routes
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
+  res.locals.error = req.flash("error");
+  res.locals.success = req.flash("success");
   next();
 });
 

@@ -44,23 +44,23 @@ let data = [
 let seedDB = () => {
   Cafe.remove()
     .then(() => console.log("Successfully removed"))
-    .then(() => {
-      // Seed cafes
-      data.forEach(seed => {
-        Cafe.create(seed).then(cafe => {
-          console.log("Added cafe");
-          // Create comments
-          Comment.create({
-            text: "This place serves incredible coffee.",
-            author: "Bob"
-          }).then(comment => {
-            cafe.comments.push(comment);
-            cafe.save();
-            console.log("Comment created");
-          });
-        });
-      });
-    })
+    // .then(() => {
+    //   // Seed cafes
+    //   data.forEach(seed => {
+    //     Cafe.create(seed).then(cafe => {
+    //       console.log("Added cafe");
+    //       // Create comments
+    //       Comment.create({
+    //         text: "This place serves incredible coffee.",
+    //         author: "Bob"
+    //       }).then(comment => {
+    //         cafe.comments.push(comment);
+    //         cafe.save();
+    //         console.log("Comment created");
+    //       });
+    //     });
+    //   });
+    // })
     .catch(e => console.log(e));
 };
 
