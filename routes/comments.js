@@ -46,7 +46,7 @@ router.get("/:commentId/edit", (req, res) => {
     .then(comment => {
       res.render("comments/edit", { cafe_id: req.params.id, comment });
     })
-    .catch(err => {
+    .catch(() => {
       res.redirect("back");
     });
 });
@@ -57,7 +57,18 @@ router.put("/:commentId", (req, res) => {
     .then(() => {
       res.redirect(`/cafes/${req.params.id}`);
     })
-    .catch(e => {
+    .catch(() => {
+      res.redirect("back");
+    });
+});
+
+// Delete comment
+router.delete("/:commentId", (req, res) => {
+  Comment.findByIdAndRemove(req.params.commentId)
+    .then(() => {
+      res.redirect(`/cafes/${req.params.id}`);
+    })
+    .catch(() => {
       res.redirect("back");
     });
 });
