@@ -31,13 +31,34 @@ router.post("/", loggedIn, (req, res) => {
         comment.save();
         cafe.comments.push(comment);
         cafe.save();
-        console.log(comment);
         res.redirect("/cafes/" + cafe._id);
       });
     })
     .catch(e => {
       console.log(e);
       res.redirect("/cafe");
+    });
+});
+
+// Edit comment form
+router.get("/:commentId/edit", (req, res) => {
+  Comment.findById(req.params.commentId)
+    .then(comment => {
+      res.render("comments/edit", { cafe_id: req.params.id, comment });
+    })
+    .catch(err => {
+      res.redirect("back");
+    });
+});
+
+// Update comment
+router.put("/:commentId", (req, res) => {
+  Comment.findByIdAndUpdate(req.params.commentId, req.body.comment)
+    .then(() => {
+      res.redirect(`/cafes/${req.params.id}`);
+    })
+    .catch(e => {
+      res.redirect("back");
     });
 });
 

@@ -18,6 +18,7 @@ block content
       div(class="comment")
         p= comment.author.username
         p= comment.text
+        a(class="edit-comment", href=`/cafes/${cafe._id}/comments/${comment._id}/edit`) Edit your review
 
     if currentUser && cafe.author.id.equals(currentUser._id)
       div(class="edit-buttons")

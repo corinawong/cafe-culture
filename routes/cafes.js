@@ -73,7 +73,7 @@ router.get("/:id", (req, res) => {
     .populate("comments")
     .exec((err, cafe) => {
       if (err) {
-        console.log(e);
+        console.log(err);
       } else {
         res.render("cafes/show", {
           title: cafe.name,
